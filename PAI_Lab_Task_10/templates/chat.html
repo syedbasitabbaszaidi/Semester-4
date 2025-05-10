@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hotel Chatbot</title>
+    <style>
+        body { font-family: Arial, sans-serif; text-align: center; margin: 20px; }
+        #chatbox { width: 50%; margin: auto; border: 1px solid #ccc; padding: 10px; min-height: 300px; }
+        .user { text-align: right; color: blue; }
+        .bot { text-align: left; color: green; }
+        input { width: 40%; padding: 10px; margin-top: 10px; }
+        button { padding: 10px; cursor: pointer; }
+    </style>
+</head>
+<body>
+    <h1>Grand Stay Hotel Chatbot</h1>
+    <div id="chatbox"></div>
+    <input type="text" id="userInput" placeholder="Type a message..." />
+    <button onclick="sendMessage()">Send</button>
+
+    <script>
+        function sendMessage() {
+            let inputField = document.getElementById("userInput");
+            let userMessage = inputField.value.trim();
+            let chatbox = document.getElementById("chatbox");
+
+            if (userMessage === "") return;
+
+            chatbox.innerHTML += `<p class='user'><strong>You:</strong> ${userMessage}</p>`;
+
+            fetch('/chat', {
+                method: 'POST',
+                body: JSON.stringify({ message: userMessage }),
+                headers: { 'Content-Type': 'application/json' }
+            })
+            .then(response => response.json())
+            .then(data => {
+                chatbox.innerHTML += `<p class='bot'><strong>Bot:</strong> ${data.response}</p>`;
+                inputField.value = "";
+            })
+            .catch(error => console.error("Error:", error));
+        }
+    </script>
+</body>
+</html>
